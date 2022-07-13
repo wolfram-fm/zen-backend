@@ -17,6 +17,7 @@ fastify.register(require("@fastify/postgres"), {
   connectionString: process.env.DB_CONNECTION_STRING,
 });
 
+fastify.register(require("./routes/post"));
 fastify.register(require("./routes/user"));
 
 fastify.get("/", async (request, reply) => {

@@ -33,6 +33,33 @@ async function userRoutes(fastify, options) {
     }
   });
 
+  const signupSchema = {
+    body: {
+      type: "object",
+      required: ["email", "password", "username"],
+      properties: {
+        email: { type: "string" },
+        password: { type: "string" },
+        username: { type: "string" },
+      },
+    },
+  };
+  fastify.post("/signup", { schema: signupSchema }, async (request, reply) => {
+    const database = await fastify.pg.connect();
+
+    try {
+      const id = await database.query(
+        "INSERT INTO users(email, password, username) VALUES ($1, $2, $3) RETURNING id",
+        [request.body.email, request.body.password, request.body.username]
+      );
+
+      reply.send({ id });
+    } catch (e) {
+      console.log(e);
+      reply.code(406).send({ error: "Sign-up failed" });
+    }
+  });
+
   fastify.get(
     "/user/:id",
     { onRequest: [fastify.authenticate] },
@@ -64,6 +91,25 @@ async function userRoutes(fastify, options) {
         );
 
         reply.send(rows[0] || {});
+      } catch (e) {
+        console.log(e);
+        reply.code(404).send({});
+      }
+    }
+  );
+
+  fastify.get(
+    "/user/:id/posts",
+    { onRequest: [fastify.authenticate] },
+    async (request, reply) => {
+      try {
+        const database = await fastify.pg.connect();
+        const { rows } = await database.query(
+          "SELECT * FROM posts WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100",
+          [request.params.id]
+        );
+
+        reply.send(rows || {});
       } catch (e) {
         console.log(e);
         reply.code(404).send({});

@@ -23,7 +23,7 @@ async function userRoutes(fastify, options) {
         const token = fastify.jwt.sign({
           uid: user.id,
         });
-        reply.send({ token });
+        reply.send({ token, id: user.id });
       } else {
         throw new Error();
       }
@@ -48,12 +48,16 @@ async function userRoutes(fastify, options) {
     const database = await fastify.pg.connect();
 
     try {
-      const id = await database.query(
+      const { rows } = await database.query(
         "INSERT INTO users(email, password, username) VALUES ($1, $2, $3) RETURNING id",
         [request.body.email, request.body.password, request.body.username]
       );
 
-      reply.send({ id });
+      const token = fastify.jwt.sign({
+        uid: user.id,
+      });
+
+      reply.send({ token, id: rows[0].id });
     } catch (e) {
       console.log(e);
       reply.code(406).send({ error: "Sign-up failed" });

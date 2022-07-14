@@ -15,6 +15,7 @@ Body
 
 Response 200
 {
+  id: number (user ID)
   token: JWT (1 hour expiry)
 }
 
@@ -39,6 +40,7 @@ Body
 Response 200
 {
   id: number (ID of new user)
+  token: JWT (1 hour expiry)
 }
 
 Response 406
@@ -100,8 +102,8 @@ Response 200
     journal: string | null,
     mood: number,
     location: string | null,
-    frameColor: string | null,
-    backgroundPhoto: string | null
+    frame_color: string | null,
+    background_photo: string | null
   },
   {
     ...
@@ -109,6 +111,36 @@ Response 200
 ]
 
 Response 404 {}
+```
+
+### Create Post
+
+This endpoint checks whether or not the user has already made a post today. If so, it will update the existing post; otherwise, it'll create a new rows. In the event of an update, only keys in the body will be updated. So if I wanted to update only the `journal` key, then I only need to send the Body with that 1 key. Anything values sent as `null` will cause the corresponding column to be erased.
+
+```
+Request
+PATCH /post
+Body
+{
+  title: string | null
+  listening: string | null
+  reading: string | null
+  journal: string | null
+  mood: number | null
+  location: string | null
+  frame_color: string | null
+  background_photo: string | null
+}
+
+Response 200
+{
+  id: number
+}
+
+Response 500
+{
+  error: "Post creation failed"
+}
 ```
 
 ## URLs

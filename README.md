@@ -2,6 +2,20 @@
 
 ## Endpoints
 
+- User
+  - [Login](#login)
+  - [Sign-up](#sign-up)
+  - [Get User by ID](#get-user-by-id)
+  - [Get User by Username](get-user-by-username)
+  - [Get Posts by User](get-posts-by-user)
+- Post
+  - [Create Post](#create-post)
+- Relationship
+  - [Follow User](#follow-user)
+  - [Unfollow User](#unfollow-user)
+
+---
+
 ### Login
 
 ```
@@ -120,6 +134,7 @@ This endpoint checks whether or not the user has already made a post today. If s
 ```
 Request
 PATCH /post
+Authorization: Bearer JWT
 Body
 {
   title: string | null
@@ -140,6 +155,60 @@ Response 200
 Response 500
 {
   error: "Post creation failed"
+}
+```
+
+### Follow User
+
+```
+Request
+POST /follow
+Authorization: Bearer JWT
+Body
+{
+  user_id: number
+}
+
+Response 200
+{
+  success: true
+}
+
+Response 400
+{
+  error: "Cannot (un)follow yourself"
+}
+
+Response 500
+{
+  error: "Follow action failed"
+}
+```
+
+### Unfollow User
+
+```
+Request
+POST /unfollow
+Authorization: Bearer JWT
+Body
+{
+  user_id: number
+}
+
+Response 200
+{
+  success: true
+}
+
+Response 400
+{
+  error: "Cannot (un)follow yourself"
+}
+
+Response 500
+{
+  error: "Follow action failed"
 }
 ```
 

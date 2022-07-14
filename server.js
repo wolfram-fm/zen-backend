@@ -19,6 +19,7 @@ fastify.register(require("@fastify/postgres"), {
 
 fastify.register(require("./routes/post"));
 fastify.register(require("./routes/user"));
+fastify.register(require("./routes/user_follows"));
 
 fastify.get("/", async (request, reply) => {
   return { hello: "world" };

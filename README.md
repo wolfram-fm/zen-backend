@@ -10,6 +10,7 @@
   - [Get Posts by User](get-posts-by-user)
 - Post
   - [Create Post](#create-post)
+  - [Get Follow Posts](#get-follow-posts)
 - Relationship
   - [Follow User](#follow-user)
   - [Unfollow User](#unfollow-user)
@@ -156,6 +157,25 @@ Response 500
 {
   error: "Post creation failed"
 }
+```
+
+### Get Follow Posts
+
+```
+Request
+GET /post/follows?date=:date
+Authorization: Bearer JWT
+Query Params
+{
+  date: 'YYYY-MM-DD' format
+}
+
+Response 200
+[
+  {
+    Post (see Create Post)
+  }
+]
 ```
 
 ### Follow User

@@ -1,38 +1,4 @@
 async function postRoutes(fastify, options) {
-  // const loginSchema = {
-  //   body: {
-  //     type: "object",
-  //     required: ["email", "password"],
-  //     properties: {
-  //       email: { type: "string" },
-  //       password: { type: "string" },
-  //     },
-  //   },
-  // };
-  // fastify.post("/login", { schema: loginSchema }, async (request, reply) => {
-  //   try {
-  //     const database = await fastify.pg.connect();
-  //     const { rows } = await database.query(
-  //       "SELECT * FROM users WHERE email=$1 AND password=$2 LIMIT 1",
-  //       [request.body.email, request.body.password]
-  //     );
-
-  //     const user = rows[0] || null;
-
-  //     if (user) {
-  //       const token = fastify.jwt.sign({
-  //         uid: user.id,
-  //       });
-  //       reply.send({ token });
-  //     } else {
-  //       throw new Error();
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //     reply.code(406).send({ error: "Login failed" });
-  //   }
-  // });
-
   fastify.get(
     "/post/:id",
     { onRequest: [fastify.authenticate] },
@@ -48,6 +14,40 @@ async function postRoutes(fastify, options) {
       } catch (e) {
         console.log(e);
         reply.code(404).send({});
+      }
+    }
+  );
+
+  fastify.get(
+    "/post/follows",
+    { onRequest: [fastify.authenticate] },
+    async (request, reply) => {
+      const userId = request.headers.jwt.uid;
+      let date = request.query?.date;
+
+      if (!date) {
+        let today = new Date();
+        date = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+      }
+
+      try {
+        const database = await fastify.pg.connect();
+        const { rows } = await database.query(
+          `SELECT *
+          FROM posts
+          WHERE date_trunc('day', created_at) = $1
+          AND user_id IN (
+            SELECT user_id_2
+            FROM user_follows
+            WHERE user_id_1 = $2
+          );`,
+          [date, userId]
+        );
+
+        reply.send(rows || []);
+      } catch (e) {
+        console.log(e);
+        reply.send([]);
       }
     }
   );

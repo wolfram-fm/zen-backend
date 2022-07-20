@@ -1,6 +1,8 @@
 require("dotenv").config();
 const fastify = require("fastify")({ logger: true });
 
+fastify.register(require("fastify-bcrypt"));
+
 fastify.register(require("@fastify/jwt"), {
   secret: "36715e76-7584-4e76-abac-b2e0c034cafa",
   sign: {

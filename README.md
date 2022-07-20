@@ -37,6 +37,10 @@ Body
 Response 200
 {
   id: number (user ID)
+  email: string
+  username: string
+  created_at: timestamp
+  role: string
   token: JWT (1 hour expiry)
 }
 

@@ -65,7 +65,7 @@ async function postRoutes(fastify, options) {
     "/news",
     { schema: createNewsSchema, onRequest: [fastify.authenticate] },
     async (request, reply) => {
-      if (request.headers.jwt.uid !== 1) {
+      if (request.headers.jwt.role !== "admin") {
         reply.code(403).send({ error: "Unauthorized posting of news article" });
         return;
       }
@@ -110,7 +110,7 @@ async function postRoutes(fastify, options) {
     "/news/:id",
     { schema: createNewsSchema, onRequest: [fastify.authenticate] },
     async (request, reply) => {
-      if (request.headers.jwt.uid !== 1) {
+      if (request.headers.jwt.role !== "admin") {
         reply.code(403).send({ error: "Unauthorized posting of news article" });
         return;
       }
@@ -154,7 +154,7 @@ async function postRoutes(fastify, options) {
     "/news/:id",
     { onRequest: [fastify.authenticate] },
     async (request, reply) => {
-      if (request.headers.jwt.uid !== 1) {
+      if (request.headers.jwt.role !== "admin") {
         reply.code(403).send({ error: "Unauthorized posting of news article" });
         return;
       }

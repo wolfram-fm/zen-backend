@@ -13,15 +13,24 @@ async function userRoutes(fastify, options) {
     try {
       const database = await fastify.pg.connect();
       const { rows } = await database.query(
-        "SELECT * FROM users WHERE email=$1 AND password=$2 LIMIT 1",
-        [request.body.email, request.body.password]
+        "SELECT * FROM users WHERE email=$1 LIMIT 1",
+        [request.body.email]
       );
 
       const user = rows[0] || null;
 
-      if (user) {
+      console.log(await fastify.bcrypt.hash(request.body.password));
+
+      if (
+        user &&
+        (await fastify.bcrypt.compare(request.body.password, user.password))
+      ) {
+        // strip password field
+        delete user.password;
+        // create JWT token
         const token = fastify.jwt.sign({
           uid: user.id,
+          role: user.role,
         });
         reply.send({ ...user, token });
       } else {
@@ -50,13 +59,21 @@ async function userRoutes(fastify, options) {
     try {
       const { rows } = await database.query(
         "INSERT INTO users(email, password, username) VALUES ($1, $2, $3) RETURNING *",
-        [request.body.email, request.body.password, request.body.username]
+        [
+          request.body.email,
+          await fastify.bcrypt.hash(request.body.password),
+          request.body.username,
+        ]
       );
 
       let newUser = rows[0];
 
+      // strip password
+      delete newUser.password;
+      // create JWT token
       const token = fastify.jwt.sign({
         uid: newUser.id,
+        role: newUser.role,
       });
 
       reply.send({ ...newUser, token });

@@ -84,7 +84,7 @@ async function postRoutes(fastify, options) {
         let updatedId;
         let columns = [];
         let values = [];
-        if (existingPost.rows?.[0].id) {
+        if (existingPost.rows?.[0]) {
           [
             "title",
             "listening",

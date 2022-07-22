@@ -183,7 +183,7 @@ Response 200
 
 ### Create News Article
 
-This endpoint will do a check to make sure the sender's JWT token has an `uid` of `1`. See notes section below on logging in as the "admin user".
+This endpoint will do a check to make sure the sender's JWT token has a `role` of `"admin"`.
 
 ```
 Request
@@ -221,7 +221,7 @@ Response 500
 
 ### Update News Article
 
-This endpoint will do a check to make sure the sender's JWT token has an `uid` of `1`. See notes section below on logging in as the "admin user". This endpoint will only update the fields that are present, and any missing fields will remain the same. You cannot set `title` or `journal` to `null` as that'll create a DB conflict.
+This endpoint will do a check to make sure the sender's JWT token has a `role` of `"admin"`. This endpoint will only update the fields that are present, and any missing fields will remain the same. You cannot set `title` or `journal` to `null` as that'll create a DB conflict.
 
 ```
 Request
@@ -254,7 +254,7 @@ Response 500
 
 ### Delete News Article
 
-This endpoint will do a check to make sure the sender's JWT token has an `uid` of `1`. See notes section below on logging in as the "admin user".
+This endpoint will do a check to make sure the sender's JWT token has a `role` of `"admin"`.
 
 ```
 Request

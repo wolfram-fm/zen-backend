@@ -1,4 +1,4 @@
-async function postRoutes(fastify, options) {
+async function newsRoutes(fastify, options) {
   fastify.get(
     "/news/:id",
     { onRequest: [fastify.authenticate] },
@@ -6,7 +6,7 @@ async function postRoutes(fastify, options) {
       try {
         const database = await fastify.pg.connect();
         const { rows } = await database.query(
-          "SELECT * FROM posts WHERE id=$1 LIMIT 1",
+          "SELECT * FROM news WHERE id=$1 LIMIT 1",
           [request.params.id]
         );
 
@@ -170,4 +170,4 @@ async function postRoutes(fastify, options) {
   );
 }
 
-module.exports = postRoutes;
+module.exports = newsRoutes;
